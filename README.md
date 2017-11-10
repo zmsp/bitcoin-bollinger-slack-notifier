@@ -6,3 +6,7 @@ Requirements:
 pandas
 `
 
+# How to run
+Update config.py to match your prefered slack configuration.
+
+Then run `python btc-alert.py` 

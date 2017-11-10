@@ -95,14 +95,14 @@ def analyze():
             pre = random.choice(['According to analysis: ', 'According to bollinger bands algorithm: ', 'Forecast says: '])
 
             if forecast == "BUY":
-                msg = pre + "Buy Bitcoin at Coinbase price {0}. This exceeds optimal Buy price of  {1} based on {2} days history".format(buy_price, round(optimal_buy), lookback_days)
+                msg = pre + "Buy Bitcoins. Coinbase is selling bitcoin at a price of {0}. This exceeds optimal buy price of {1} based on {2} days history.".format(buy_price, round(optimal_buy), lookback_days)
                 send_notification(msg )
             elif forecast == "SELL":
-                msg = pre + "Sell Bitcoin at Coinbase price {0}. This exceeds optimal Buy price of  {1} based on {2} days history".format(sell_price, round(optimal_sell), lookback_days)
+                msg = pre + "Sell your Bitcoins. Coinbase is buying bitcoin at a price of {0}. This exceeds optimal sell price of {1} based on {2} days history".format(sell_price, round(optimal_sell), lookback_days)
                 send_notification(msg)
             else:
                 send_notification("Coinbase buy price: " + buy_price + "Coinbase sell price: " + sell_price + ". Analysis recommands that you hold on to your bitcoins")
-        time.sleep(600)
+        time.sleep(RERUN_TIME)
 
 
 if __name__ == "__main__":
