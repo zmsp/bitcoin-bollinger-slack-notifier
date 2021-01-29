@@ -3,8 +3,9 @@ import datetime
 import time
 import random
 import json
-
+import matplotlib.pyplot as plt
 from config import *
+import pync
 
 
 import pandas as pd
@@ -22,6 +23,7 @@ def get_historical_data_from_coindesk(start, end=None):
     # code from https://github.com/dursk/bitcoin-price-api/blob/master/exchanges/coindesk.py
     if not end:
         end = get_formatted_datetime()
+        ## todo get hourly data
     url = (
         'https://api.coindesk.com/v1/bpi/historical/close.json'
         '?start={}&end={}'.format(
@@ -41,10 +43,15 @@ def bollinger_bands_algorithm_on_historical_data(window=20, std_diff=2.0 ):
     df_upper_band = df_avg + (df_std *std_diff )
     df_lower_band = df_avg - (df_std * std_diff)
 
+    # ax= df_price.plot()
+    # df_upper_band.plot(ax=ax)
+    # df_lower_band.plot(ax=ax)
+    # plt.show()
     return df_upper_band, df_lower_band
 
 
 def current_coinbase_price ():
+
 
     buy_price = get_response("https://api.coinbase.com/v2/prices/buy?currency=USD")["data"]["amount"]
     sell_price = get_response("https://api.coinbase.com/v2/prices/sell?currency=USD")["data"]["amount"]
@@ -55,21 +62,24 @@ def current_coinbase_price ():
 def send_notification(message):
     print(message)
 
+    pync.notify(message)
 
-    slack_data = {'text': message, "channel":SLACK_CHANNEL, "username": SLACK_USER, "icon_emoji":SLACK_ICON}
 
-    response = requests.post(
-        WEBHOOK_URL, data=json.dumps(slack_data),
-        headers={'Content-Type': 'application/json'}
-    )
-    if response.status_code != 200:
-        raise ValueError(
-            'Request to slack returned an error %s, the response is:\n%s'
-            % (response.status_code, response.text)
-        )
+
+    # slack_data = {'text': message, "channel":SLACK_CHANNEL, "username": SLACK_USER, "icon_emoji":SLACK_ICON}
+    #
+    # response = requests.post(
+    #     WEBHOOK_URL, data=json.dumps(slack_data),
+    #     headers={'Content-Type': 'application/json'}
+    # )
+    # if response.status_code != 200:
+    #     raise ValueError(
+    #         'Request to slack returned an error %s, the response is:\n%s'
+    #         % (response.status_code, response.text)
+    #     )
 
 def analyze():
-    lookback_days = 7
+    lookback_days = 3
     std_diff = 2
     df_upper, df_lower = bollinger_bands_algorithm_on_historical_data(lookback_days, std_diff)
     forecast = "HOLD" # "HOLD", "BUY", "SELL"
